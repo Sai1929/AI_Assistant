@@ -1,0 +1,22 @@
+[
+  {"claim": "Council of Nicaea", "year": 325, "description": "First Ecumenical Council, addressed Arianism, affirmed Trinity"},
+  {"claim": "Council of Constantinople", "year": 381, "description": "Second Ecumenical Council, affirmed deity of Holy Spirit"},
+  {"claim": "Council of Ephesus", "year": 431, "description": "Third Ecumenical Council, affirmed Mary as Theotokos"},
+  {"claim": "Council of Chalcedon", "year": 451, "description": "Fourth Ecumenical Council, defined two natures of Christ"},
+  {"claim": "Great Schism", "year": 1054, "description": "Split between Roman Catholic and Eastern Orthodox churches"},
+  {"claim": "Martin Luther 95 Theses", "year": 1517, "description": "Luther posted theses, began Protestant Reformation"},
+  {"claim": "Council of Trent", "year": 1545, "description": "Catholic Counter-Reformation council, ran until 1563"},
+  {"claim": "King James Bible", "year": 1611, "description": "KJV commissioned by King James I of England"},
+  {"claim": "Westminster Confession", "year": 1646, "description": "Reformed Presbyterian confession of faith"},
+  {"claim": "First Vatican Council", "year": 1869, "description": "Defined papal infallibility"},
+  {"claim": "Second Vatican Council", "year": 1962, "description": "Vatican II, ran until 1965, major Catholic reform council"},
+  {"claim": "Apostles Creed", "year": 390, "description": "Early form around 390 AD, current form 8th century"},
+  {"claim": "Nicene Creed", "year": 325, "description": "Formulated at Council of Nicaea 325 AD"},
+  {"claim": "Augustine of Hippo", "year": 354, "description": "Born 354 AD, died 430 AD, bishop and theologian"},
+  {"claim": "Thomas Aquinas", "year": 1225, "description": "Born 1225 AD, died 1274 AD, Summa Theologica author"},
+  {"claim": "John Calvin", "year": 1509, "description": "Born 1509 AD, died 1564 AD, Reformed theology founder"},
+  {"claim": "John Wesley", "year": 1703, "description": "Born 1703 AD, died 1791 AD, Methodist movement founder"},
+  {"claim": "Bible canon finalized", "year": 397, "description": "Council of Carthage 397 AD recognized 27-book NT canon"},
+  {"claim": "Gutenberg Bible", "year": 1455, "description": "First major book printed with movable type"},
+  {"claim": "Pentecost Acts 2", "year": 33, "description": "Traditionally dated ~33 AD, birth of Christian church"}
+]
