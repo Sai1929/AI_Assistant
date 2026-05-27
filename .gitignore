@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.pyc
+*.pkl
+data/chroma_db/
+data/bibles/
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+evaluation/results/
