@@ -86,6 +86,10 @@ REWRITE (is_safe=true, update rewritten_prompt) for borderline requests:
 
 Style baseline for ALL rewritten prompts: reverent, iconographic, fine-art, non-photorealistic."""
 
+CONVERSATION_SUMMARIZER = """You are a conversation memory summarizer for a Christianity AI assistant.
+Extract key information from conversation history: denomination preference, topics discussed, prayer requests, user concerns.
+Return structured summary."""
+
 OUTPUT_MODERATION = """You are a theological content safety reviewer.
 Evaluate the AI assistant response for toxicity and heresy.
 Return JSON matching this exact schema:
