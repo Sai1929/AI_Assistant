@@ -1,15 +1,25 @@
 'use client';
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-export type EvalSummary = { total: number; passed: number; failed: number; pass_rate: number; elapsed_seconds: number; by_category: Record<string, { total: number; passed: number }> };
-export type EvalResult = { id: string; category: string; input: string; passed: boolean; refused: boolean; should_refuse: boolean; intent?: string; expected_intent?: string; details: string[] };
+export type EvalSummary = {
+  total: number; passed: number; failed: number;
+  pass_rate: number; elapsed_seconds: number;
+  by_category: Record<string, { total: number; passed: number }>;
+};
+export type EvalResult = {
+  id: string; category: string; input: string;
+  passed: boolean; refused: boolean; should_refuse: boolean;
+  intent?: string; expected_intent?: string; details: string[];
+};
 export type EvalData = { summary: EvalSummary; results: EvalResult[] };
 
+const QK = ['eval-results'];
+
 export function useEvalResults() {
-  const [refreshKey, setRefreshKey] = useState(0);
+  const qc = useQueryClient();
+
   const query = useQuery<EvalData | null>({
-    queryKey: ['eval-results', refreshKey],
+    queryKey: QK,
     queryFn: async () => {
       try {
         const res = await fetch('/api/eval-results');
@@ -17,7 +27,25 @@ export function useEvalResults() {
         return res.json();
       } catch { return null; }
     },
-    staleTime: 30_000,
+    staleTime: 60_000,
   });
-  return { ...query, refresh: () => setRefreshKey(k => k + 1) };
+
+  const runMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch('/api/eval-results', { method: 'POST' });
+      if (!res.ok) throw new Error('Eval run failed');
+      return res.json() as Promise<EvalData>;
+    },
+    onSuccess: (data) => {
+      qc.setQueryData(QK, data);
+    },
+  });
+
+  return {
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    isRunning: runMutation.isPending,
+    runEval: () => runMutation.mutate(),
+    refresh: () => qc.invalidateQueries({ queryKey: QK }),
+  };
 }

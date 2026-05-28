@@ -28,6 +28,7 @@ export function useChat() {
     },
     onSuccess: (res) => {
       setApiDown(false);
+      setLastError(null);
       appendMessage({ id: nanoid(), role: 'assistant', content: res.response ?? '', time: nowTime(), meta: res });
     },
     onError: (err: unknown) => {

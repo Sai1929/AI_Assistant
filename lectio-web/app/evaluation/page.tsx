@@ -7,7 +7,7 @@ import { useEvalResults } from '@/hooks/useEvalResults';
 import { RefreshCw } from 'lucide-react';
 
 export default function EvaluationPage() {
-  const { data, isLoading, refresh } = useEvalResults();
+  const { data, isLoading, isRunning, runEval, refresh } = useEvalResults();
 
   return (
     <AppShell activeTab="evaluation">
@@ -32,12 +32,12 @@ export default function EvaluationPage() {
                 <p className="font-mono text-[13px] text-ink">$ python scripts/run_eval.py --full</p>
               </div>
             </div>
-            <button onClick={refresh} className="flex items-center gap-2 border border-rule rounded-sm px-5 py-2 text-[11px] font-ui font-semibold uppercase tracking-wide text-ink hover:bg-paper-deep transition-colors">
-              <RefreshCw size={12} />Refresh
+            <button onClick={runEval} disabled={isRunning} className="flex items-center gap-2 border border-rule rounded-sm px-5 py-2 text-[11px] font-ui font-semibold uppercase tracking-wide text-ink hover:bg-paper-deep transition-colors disabled:opacity-40">
+              <RefreshCw size={12} className={isRunning ? 'animate-spin' : ''} />{isRunning ? 'Running…' : 'Run Eval'}
             </button>
           </div>
         )}
-        {!isLoading && data && <EvalDashboard data={data} onRefresh={refresh} />}
+        {!isLoading && data && <EvalDashboard data={data} onRefresh={runEval} isRunning={isRunning} />}
       </div>
     </AppShell>
   );

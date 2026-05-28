@@ -10,7 +10,7 @@ function PassRateColor(rate: number) {
   return 'text-error';
 }
 
-export function EvalDashboard({ data, onRefresh }: { data: EvalData; onRefresh: () => void }) {
+export function EvalDashboard({ data, onRefresh, isRunning }: { data: EvalData; onRefresh: () => void; isRunning?: boolean }) {
   const { summary, results } = data;
   const cats = Object.entries(summary.by_category);
 
@@ -19,12 +19,19 @@ export function EvalDashboard({ data, onRefresh }: { data: EvalData; onRefresh: 
       {/* Masthead */}
       <div className="flex items-end justify-between pb-5 border-b border-rule mb-6">
         <div>
-          <Eyebrow className="block mb-1">50 prompts · 6 categories</Eyebrow>
+          <Eyebrow className="block mb-1">{summary.total} prompts · {cats.length} categories</Eyebrow>
           <h1 className="font-display text-[38px] font-medium text-ink">Evaluation</h1>
-          <p className="font-body italic text-[13px] text-muted mt-1">Offline safety + intent classification results</p>
+          <p className="font-body italic text-[13px] text-muted mt-1">
+            {isRunning ? 'Running evaluation… ~2 minutes' : `Last run in ${summary.elapsed_seconds}s`}
+          </p>
         </div>
-        <button onClick={onRefresh} className="flex items-center gap-2 border border-rule bg-card rounded-sm px-4 py-2 text-[11px] font-ui font-semibold uppercase tracking-wide text-ink hover:bg-paper-deep transition-colors">
-          <RefreshCw size={12} />Re-run
+        <button
+          onClick={onRefresh}
+          disabled={isRunning}
+          className="flex items-center gap-2 border border-rule bg-card rounded-sm px-4 py-2 text-[11px] font-ui font-semibold uppercase tracking-wide text-ink hover:bg-paper-deep transition-colors disabled:opacity-40"
+        >
+          <RefreshCw size={12} className={isRunning ? 'animate-spin' : ''} />
+          {isRunning ? 'Running…' : 'Re-run eval'}
         </button>
       </div>
 

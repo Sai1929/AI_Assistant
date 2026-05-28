@@ -8,6 +8,7 @@ export type ChatResponse = {
   session_id: string;
   response: string;
   image_b64: string | null;
+  image_mime_type?: string;
   intent: Intent;
   denomination: Denomination;
   toxicity_ok: boolean;

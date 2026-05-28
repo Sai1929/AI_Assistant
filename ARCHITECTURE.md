@@ -1,6 +1,6 @@
 # Architecture Note — Christianity AI Assistant
 
-> Take-home submission for SoluLab Mid AI Engineer role.
+> AI Engineering Assignment submission.
 > Covers design decisions, data flows, and trade-offs for a scripture-grounded Christianity AI
 > that prevents hallucinations through deterministic verification.
 

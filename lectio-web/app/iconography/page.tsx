@@ -8,10 +8,8 @@ export default function IconographyPage() {
   const { result, isPending, generate, reset } = useImageGen();
   return (
     <AppShell activeTab="iconography">
-      <div className="flex h-full overflow-hidden">
-        <SubjectPanel onGenerate={generate} isPending={isPending} />
-        <GalleryPanel result={result} isPending={isPending} onVariation={reset} />
-      </div>
+      <SubjectPanel onGenerate={generate} isPending={isPending} />
+      <GalleryPanel result={result} isPending={isPending} onVariation={reset} />
     </AppShell>
   );
 }

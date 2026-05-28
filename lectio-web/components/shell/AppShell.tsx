@@ -11,13 +11,13 @@ export function AppShell({ activeTab, children, composer }: { activeTab: Tab; ch
   return (
     <div className="flex h-screen overflow-hidden bg-paper">
       <Sidebar />
-      <div className="flex flex-1 flex-col min-w-0">
+      <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
         <TabBar activeTab={activeTab} />
         {apiDown && <ConnectionErrorBanner />}
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <div className="flex-1 overflow-auto">{children}</div>
-          {composer && <div className="border-t border-rule bg-paper px-14 py-4">{composer}</div>}
+        <div className="flex flex-1 overflow-hidden">
+          {children}
         </div>
+        {composer && <div className="shrink-0 border-t border-rule bg-paper px-8 py-4">{composer}</div>}
       </div>
     </div>
   );

@@ -35,3 +35,33 @@ html, body {
   0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
   40%           { opacity: 1;    transform: translateY(-2px); }
 }
+
+/* ── Scrollbars ── */
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #C8BC9E transparent;
+}
+
+/* Chrome / Edge / Safari */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #C8BC9E;
+  border-radius: 999px;
+  border: none;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #B8A880;
+}
+/* Remove up/down arrows (buttons) */
+::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}

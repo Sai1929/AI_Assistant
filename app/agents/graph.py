@@ -29,13 +29,14 @@ class AssistantState(TypedDict):
     session_id: str
     user_message: str
     conversation_history: list[dict]
-    intent: str | None           # from IntentClassification
+    intent: str | None
     denomination: str | None
     response: str | None
-    image_result: dict | None    # for image_gen intent
+    image_result: dict | None
     refusal_reason: str | None
     toxicity_ok: bool
     error: str | None
+    valid_citations: list[dict]
 
 
 # ---------------------------------------------------------------------------
@@ -59,7 +60,11 @@ def _get_validator():
     global _validator
     if _validator is None:
         from app.retrieval.verse_validator import VerseValidator
-        _validator = VerseValidator()
+        from app.retrieval.bible_store import BibleStore
+        from app.config import BIBLE_DATA_PATH
+        store = BibleStore()
+        store.load_from_files(BIBLE_DATA_PATH)
+        _validator = VerseValidator(store=store)
     return _validator
 
 
@@ -67,7 +72,8 @@ def _get_hist_validator():
     global _hist_validator
     if _hist_validator is None:
         from app.retrieval.historical_validator import HistoricalValidator
-        _hist_validator = HistoricalValidator()
+        from app.config import HISTORICAL_FACTS_PATH
+        _hist_validator = HistoricalValidator(facts_path=HISTORICAL_FACTS_PATH)
     return _hist_validator
 
 
@@ -112,9 +118,13 @@ def scripture_qa_node(state: AssistantState) -> dict:
     """Retrieve-grounded Bible Q&A with hallucination prevention."""
     from app.agents.scripture_qa import answer_scripture_query
 
-    retriever = _get_retriever()
-    validator = _get_validator()
-    hist_validator = _get_hist_validator()
+    try:
+        retriever = _get_retriever()
+        validator = _get_validator()
+        hist_validator = _get_hist_validator()
+    except Exception:
+        # Index not built yet — fall back to LLM-only answer
+        return general_chat_node(state)
 
     result = answer_scripture_query(
         query=state["user_message"],
@@ -125,10 +135,10 @@ def scripture_qa_node(state: AssistantState) -> dict:
         denomination=state.get("denomination"),
     )
 
-    if result.get("status") == "refused_unverified":
-        return {"response": get_refusal("verse_unverified")}
+    if result.get("status") in ("refused_unverified", "noncanonical_book"):
+        return {"response": result["answer"], "valid_citations": []}
 
-    return {"response": result["answer"]}
+    return {"response": result["answer"], "valid_citations": result.get("valid_citations", [])}
 
 
 def theology_node(state: AssistantState) -> dict:
@@ -209,7 +219,8 @@ def memory_update_node(state: AssistantState) -> dict:
         add_turn(sid, "assistant", state["response"])
 
     update_denomination(sid, state.get("denomination"))
-    return {}
+    # LangGraph requires at least one state key to be written
+    return {"error": None}
 
 
 # ---------------------------------------------------------------------------
@@ -285,6 +296,7 @@ def run_assistant(session_id: str, user_message: str) -> dict:
         refusal_reason=None,
         toxicity_ok=False,
         error=None,
+        valid_citations=[],
     )
 
     final_state = _graph.invoke(initial_state)
@@ -295,4 +307,5 @@ def run_assistant(session_id: str, user_message: str) -> dict:
         "intent": final_state.get("intent"),
         "denomination": final_state.get("denomination"),
         "toxicity_ok": final_state.get("toxicity_ok", True),
+        "valid_citations": final_state.get("valid_citations", []),
     }

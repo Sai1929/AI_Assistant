@@ -12,12 +12,14 @@ class Citation:
     verse_start: int
     verse_end: Optional[int]
     verified_text: Optional[str] = None
+    translation: Optional[str] = None
 
 
 @dataclass
 class ValidationResult:
     valid_citations: list[Citation] = field(default_factory=list)
     invalid_citations: list[Citation] = field(default_factory=list)
+    noncanonical_books: list[str] = field(default_factory=list)
 
     @property
     def is_valid(self) -> bool:
@@ -25,10 +27,16 @@ class ValidationResult:
 
     @property
     def correction_hints(self) -> list[str]:
-        return [
-            f"Citation '{c.reference}' does not exist. Remove or correct it."
-            for c in self.invalid_citations
-        ]
+        hints = []
+        for book in self.noncanonical_books:
+            hints.append(
+                f"'{book}' is not a canonical Bible book. Acknowledge this explicitly "
+                f"and suggest a real canonical alternative if relevant."
+            )
+        for c in self.invalid_citations:
+            if c.book.lower() not in [b.lower() for b in self.noncanonical_books]:
+                hints.append(f"Citation '{c.reference}' does not exist. Remove or correct it.")
+        return hints
 
 
 # Pattern: optional leading number (1/2/3), book name, chapter:verse[-verse_end]
@@ -69,9 +77,11 @@ class VerseValidator:
         """
         Extract all Bible citations from *text*, look each one up in the
         BibleStore, and return a ValidationResult separating valid from invalid.
+        Books not present in any translation are flagged as noncanonical.
         """
         result = ValidationResult()
         citations = self.extract_citations(text)
+        known = self.store.known_books()
 
         for citation in citations:
             text_found = self.store.exact_lookup(
@@ -84,6 +94,10 @@ class VerseValidator:
                 citation.verified_text = text_found
                 result.valid_citations.append(citation)
             else:
+                # Distinguish: book unknown entirely vs wrong chapter/verse
+                if citation.book.lower() not in known:
+                    if citation.book not in result.noncanonical_books:
+                        result.noncanonical_books.append(citation.book)
                 result.invalid_citations.append(citation)
 
         return result

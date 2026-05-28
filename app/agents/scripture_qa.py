@@ -38,6 +38,26 @@ def answer_scripture_query(
     from app.prompts.templates import build_scripture_prompt
 
     translation = _denom_to_translation(denomination)
+
+    # Pre-check: detect noncanonical books in the user's query itself
+    query_check = validator.validate(query)
+    if query_check.noncanonical_books:
+        books = ", ".join(query_check.noncanonical_books)
+        return {
+            "answer": (
+                f"'{books}' is not a book in the canonical Bible "
+                f"(Catholic, Protestant, or Orthodox traditions). "
+                f"It may be apocryphal, pseudepigraphal, or simply not a biblical text. "
+                f"I can only reference scripture from the recognized biblical canon. "
+                f"If you're looking for a similar topic, I'd be happy to suggest canonical passages."
+            ),
+            "valid_citations": [],
+            "invalid_citations": [],
+            "hist_issues": [],
+            "attempts": 0,
+            "status": "noncanonical_book",
+        }
+
     retrieved = retriever.search(query, translation=translation)
     context = _build_context(retrieved)
 
@@ -59,17 +79,20 @@ def answer_scripture_query(
         verse_result = validator.validate(answer)
         hist_result = hist_validator.validate(answer)
 
-        if verse_result.is_valid:
+        if verse_result.is_valid and hist_result.is_clean:
+            for c in verse_result.valid_citations:
+                if not getattr(c, "translation", None):
+                    c.translation = validator.translation
             return {
                 "answer": answer,
                 "valid_citations": verse_result.valid_citations,
                 "invalid_citations": [],
-                "hist_issues": hist_result.unverified,
+                "hist_issues": [],
                 "attempts": attempt + 1,
                 "status": "ok",
             }
 
-        correction_hints = verse_result.correction_hints
+        correction_hints = verse_result.correction_hints + hist_result.uncertainty_notes
         attempt += 1
 
     return {

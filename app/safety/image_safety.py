@@ -45,9 +45,11 @@ def generate_safe_image(prompt: str) -> dict:
             "refusal_reason": "image_generation_failed",
         }
 
+    # Detect MIME type from magic bytes
+    mime_type = "image/jpeg" if image_bytes[:2] == b"\xff\xd8" else "image/png"
     image_b64 = base64.b64encode(image_bytes).decode()
 
-    vision_result = analyze_image_safety(image_b64)
+    vision_result = analyze_image_safety(image_b64, mime_type=mime_type)
     if vision_result.get("violates"):
         return {
             "success": False,
@@ -60,6 +62,7 @@ def generate_safe_image(prompt: str) -> dict:
     return {
         "success": True,
         "image_b64": image_b64,
+        "mime_type": mime_type,
         "original_prompt": prompt,
         "rewritten_prompt": safety.rewritten_prompt,
         "refusal_reason": None,

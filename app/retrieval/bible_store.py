@@ -64,6 +64,10 @@ class BibleStore:
         """Return True if the verse exists in the hashmap."""
         return self.exact_lookup(book, chapter, verse, translation) is not None
 
+    def known_books(self) -> set[str]:
+        """Return lowercase set of all book names present in the store."""
+        return {book for (book, _, _, _) in self._hashmap}
+
     def get_all_verses(self, translation: str = "kjv") -> list[dict]:
         """Return all verses for the given translation as a list of dicts."""
         tl = translation.lower()
