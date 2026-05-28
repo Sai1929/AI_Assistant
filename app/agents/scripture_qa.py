@@ -59,7 +59,19 @@ def answer_scripture_query(
         }
 
     retrieved = retriever.search(query, translation=translation)
-    context = _build_context(retrieved)
+
+    # Inject exact verse lookups for any references mentioned in the query.
+    # This guarantees the LLM has the verse text even if retrieval misses it.
+    injected_lines = []
+    query_citations = validator.extract_citations(query)
+    trans_for_lookup = translation or "kjv"
+    for qc in query_citations:
+        text_found = validator.store.exact_lookup(qc.book, qc.chapter, qc.verse_start, trans_for_lookup)
+        if text_found:
+            trans_label = trans_for_lookup.upper()
+            injected_lines.append(f"[{qc.reference} {trans_label}]: {text_found}")
+
+    context = "\n".join(injected_lines) + ("\n" if injected_lines else "") + _build_context(retrieved)
 
     messages = conversation_history[-6:] + [
         {"role": "user", "content": build_scripture_prompt(query, context)}
