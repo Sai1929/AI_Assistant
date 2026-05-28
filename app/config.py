@@ -19,7 +19,7 @@ BM25_TOP_K = int(os.getenv("BM25_TOP_K", "5"))
 DENSE_TOP_K = int(os.getenv("DENSE_TOP_K", "5"))
 FUSED_TOP_K = int(os.getenv("FUSED_TOP_K", "3"))
 
-GROQ_PRIMARY_MODEL = "llama-3.1-8b-instant"  # temp: 70b TPD exhausted
+GROQ_PRIMARY_MODEL = "llama-3.3-70b-versatile"
 GROQ_FAST_MODEL = "llama-3.1-8b-instant"
 GROQ_VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
 GROQ_GUARD_MODEL = "llama-guard-4-12b"
