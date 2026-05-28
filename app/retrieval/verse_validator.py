@@ -40,8 +40,10 @@ class ValidationResult:
 
 
 # Pattern: optional leading number (1/2/3), book name, chapter:verse[-verse_end]
+# re.IGNORECASE so "hezekiah 12:5" and "Hezekiah 12:5" both match
 _CITATION_RE = re.compile(
-    r"\b((?:[123]\s?)?[A-Z][a-zA-Z]+)\s+(\d+):(\d+)(?:-(\d+))?\b"
+    r"\b((?:[123]\s?)?[A-Za-z][a-zA-Z]+)\s+(\d+):(\d+)(?:-(\d+))?\b",
+    re.IGNORECASE,
 )
 
 

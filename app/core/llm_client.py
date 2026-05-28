@@ -17,6 +17,12 @@ T = TypeVar("T", bound=BaseModel)
 _groq = Groq(api_key=GROQ_API_KEY)
 
 
+def _strip_think_tags(text: str) -> str:
+    """Remove <think>...</think> reasoning blocks (Qwen3 chain-of-thought)."""
+    import re
+    return re.sub(r"<think>.*?</think>\s*", "", text, flags=re.DOTALL).strip()
+
+
 def chat(
     messages: list[dict],
     model: str | None = None,
@@ -33,7 +39,7 @@ def chat(
         temperature=0.3,
         max_tokens=2048,
     )
-    return response.choices[0].message.content
+    return _strip_think_tags(response.choices[0].message.content)
 
 
 def chat_structured(
