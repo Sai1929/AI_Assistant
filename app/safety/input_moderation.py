@@ -20,6 +20,12 @@ def moderate_input(
     classification = classify_intent(user_message, conversation_history)
 
     if classification.intent == "refuse":
+        if classification.safety_flag == "out_of_scope":
+            return False, get_refusal("out_of_scope"), classification
+        if classification.safety_flag == "hateful":
+            return False, get_refusal("hateful_content"), classification
+        if classification.safety_flag == "manipulation_attempt":
+            return False, get_refusal("verse_manipulation"), classification
         return False, get_refusal("adversarial_intent"), classification
     if classification.safety_flag == "manipulation_attempt":
         return False, get_refusal("verse_manipulation"), classification

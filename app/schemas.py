@@ -5,7 +5,7 @@ from typing import Literal
 class IntentClassification(BaseModel):
     intent: Literal["scripture_qa", "theology", "image_gen", "general_chat", "refuse", "contradiction"]
     denomination: Literal["catholic", "protestant", "orthodox", "non_denominational"] | None = None
-    safety_flag: Literal["manipulation_attempt", "hateful", "benign", "uncertain"] = "benign"
+    safety_flag: Literal["manipulation_attempt", "hateful", "out_of_scope", "benign", "uncertain"] = "benign"
     requires_scripture: bool = False
     has_contradictory_premises: bool = False
     confidence: float = Field(ge=0.0, le=1.0)
