@@ -87,10 +87,15 @@ export function SubjectPanel({ onGenerate, isPending }: {
               onClick={() => setStyle(s.value)}
               disabled={isPending}
               className={`w-full text-left px-3 py-2 rounded-sm font-display text-[14px] font-medium transition-colors border disabled:opacity-40 ${
-                style === s.value ? 'bg-ink text-paper border-ink' : 'bg-transparent border-rule text-muted hover:text-ink'
+                style === s.value
+                  ? 'bg-ink text-paper border-ink ring-2 ring-gold ring-offset-1'
+                  : 'bg-transparent border-rule text-muted hover:text-ink hover:border-ink-soft'
               }`}
             >
-              {s.label}
+              <span className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${style === s.value ? 'bg-gold' : 'bg-transparent border border-rule'}`} />
+                {s.label}
+              </span>
             </button>
           ))}
         </div>

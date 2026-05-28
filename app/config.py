@@ -19,8 +19,8 @@ BM25_TOP_K = int(os.getenv("BM25_TOP_K", "5"))
 DENSE_TOP_K = int(os.getenv("DENSE_TOP_K", "5"))
 FUSED_TOP_K = int(os.getenv("FUSED_TOP_K", "3"))
 
-GROQ_PRIMARY_MODEL = "qwen/qwen3-32b"  # demo: llama TPD exhausted
-GROQ_FAST_MODEL = "qwen/qwen3-32b"
+GROQ_PRIMARY_MODEL = "llama-3.3-70b-versatile"
+GROQ_FAST_MODEL = "llama-3.1-8b-instant"
 GROQ_VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
 GROQ_GUARD_MODEL = "llama-guard-4-12b"
 GEMINI_IMAGE_MODEL = "gemini-2.0-flash-exp"
